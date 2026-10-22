@@ -1,4 +1,20 @@
-# ayubal-douyin-transcribe
+<div align="center">
+
+![ayubal-douyin-transcribe](./assets/banner.png)
+
+# 🎙️ ayubal-douyin-transcribe
+
+**抖音短视频本地离线语音转写工具与 Agent Skill**
+
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![sherpa-onnx](https://img.shields.io/badge/Engine-sherpa--onnx-orange?style=for-the-badge)](https://github.com/k2-fsa/sherpa-onnx)
+[![Model-SenseVoice](https://img.shields.io/badge/Model-SenseVoice--Small-blueviolet?style=for-the-badge)](https://github.com/FunAudioLLM/SenseVoice)
+[![License-MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
+[![Cost-Free](https://img.shields.io/badge/API%20Cost-%EF%BF%A50.00-brightgreen?style=for-the-badge)](#)
+
+</div>
+
+---
 
 抖音短视频本地离线语音转写工具与 Agent Skill。
 
@@ -8,7 +24,7 @@
 
 ---
 
-## 工作流程
+## 🧭 工作流程
 
 ```mermaid
 flowchart LR
@@ -22,7 +38,7 @@ flowchart LR
 
 ---
 
-## 功能特点
+## ✨ 功能特点
 
 - **完全本地运行**：语音识别由本地的 SenseVoice ONNX 模型完成，不依赖外部付费转写 API，无 Token 费用。
 - **长音频 20 秒切片**：针对长视频按 20 秒滑动窗口分块推理，避免长音频单次解码导致的丢句漏字。
@@ -32,7 +48,7 @@ flowchart LR
 
 ---
 
-## 环境准备
+## 🛠️ 环境准备
 
 ### 1. 安装基础依赖
 
@@ -59,7 +75,7 @@ playwright install msedge   # 或 playwright install chromium
 
 ---
 
-## 使用方法
+## 🚀 使用方法
 
 ### 命令行运行
 
@@ -76,7 +92,7 @@ python scripts/douyin_transcribe.py "https://v.douyin.com/xxxx/" --json
 
 ---
 
-## 接入 Agent
+## 🤖 接入 Agent
 
 本项目可作为技能供支持 Skill 架构的 Agent 调用：
 
@@ -92,7 +108,7 @@ python scripts/douyin_transcribe.py "https://v.douyin.com/xxxx/" --json
 
 ---
 
-## 输出排版样式
+## 📜 输出排版样式
 
 文字稿交付采用短句呼吸感排版，示例：
 
@@ -110,6 +126,6 @@ python scripts/douyin_transcribe.py "https://v.douyin.com/xxxx/" --json
 
 ---
 
-## 许可证
+## 📄 许可证
 
 本项目采用 [MIT License](./LICENSE) 授权。
