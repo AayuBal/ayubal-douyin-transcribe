@@ -1,126 +1,102 @@
-<div align="center">
+# ayubal-douyin-transcribe
 
-# 🎙️ ayubal-douyin-transcribe
+抖音短视频本地离线语音转写工具与 Agent Skill。
 
-**抖音短视频纯本地离线高精度语音转写 Skill | 跨 Agent 智能体全生态兼容**
+输入抖音分享链接或文本，工具通过 Playwright 抓取原声音频直链，利用本地 SenseVoice 模型进行 20 秒切片语音识别，输出按自然口播停顿分段的文字稿。
 
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![sherpa-onnx](https://img.shields.io/badge/Engine-sherpa--onnx-orange?style=for-the-badge)](https://github.com/k2-fsa/sherpa-onnx)
-[![Model-SenseVoice](https://img.shields.io/badge/Model-SenseVoice--Small-blueviolet?style=for-the-badge)](https://github.com/FunAudioLLM/SenseVoice)
-[![License-MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
-[![Cost-Free](https://img.shields.io/badge/API%20Cost-%EF%BF%A50.00-brightgreen?style=for-the-badge)](#)
-
-<p align="center">
-  <b>零付费 API</b> • <b>零第三方 Token 消耗</b> • <b>100% 本地离线运行</b> • <b>无 GUI 窗口极速静默转写</b><br>
-  专为 <b>Antigravity、Claude Code、Codex、Cursor、Qwen Code</b> 等前沿 AI Agent 打造的一键逐字稿提炼工作流。
-</p>
-
-</div>
+无需购买第三方数据接口，无需启动桌面端程序，可在终端直接执行，也可作为 Skill 配置给 Antigravity、Claude Code、Codex 等 Agent 调用。
 
 ---
 
-## 💡 为什么需要这个项目？
-
-目前在 AI 智能体生态中提取短视频文案通常面临以下痛点：
-1. **费用昂贵**：传统方案大多依赖 TikHub、轻抖等商业闭源 API，每转写一条视频都要扣费；
-2. **界面笨重**：许多开源工具绑定复杂的 Electron/Tauri 桌面客户端，无法作为纯命令行能力无缝嵌入 AI Agent 工作流；
-3. **丢字漏句**：长视频直接喂给普通 ASR 模型极易因为超过单次上下文限制而丢弃大量语句；
-4. **排版反人类**：未经处理的转写要么是无标点的几万字大泥潭，要么被过度总结成机械式 PPT 大纲，丧失了视频口播的原汁原味。
-
-`ayubal-douyin-transcribe` 彻底解决了这些问题：
-通过 **Playwright 无头静默拦截** + **FFmpeg 单声道转换** + **SenseVoice 20s 滑动窗口切片解码** + **智能体语义纠偏与呼吸感排版**，一键跑通闭环！
-
----
-
-## 🏗️ 架构流向图 (Architecture)
+## 工作流程
 
 ```mermaid
-flowchart TD
-    A[📱 抖音分享链接 / 文案] --> B[🌐 Playwright 静默拦截 Web API]
-    B --> C[🎵 获取最高码率原声 MP3]
-    C --> D[⚙️ FFmpeg 转换为 16kHz PCM WAV]
-    D --> E[🧠 本地 SenseVoice 离线大模型]
-    E -->|20s 滑动窗口无损切片| F[📝 100% 完整原始文本流]
-    F --> G[🤖 Agent 大模型: Gemini / Claude / GPT]
-    G -->|语义校正网络热梗 + 呼吸感短句分段| H[✨ 交付小红书 / 社交媒体优选文案]
-
-    style A fill:#f9f,stroke:#333,stroke-width:1px
-    style E fill:#bbf,stroke:#333,stroke-width:1px
-    style G fill:#dfd,stroke:#333,stroke-width:1px
-    style H fill:#ffd,stroke:#333,stroke-width:2px
+flowchart LR
+    A[抖音分享链接 / 文案] --> B[Playwright 拦截音频地址]
+    B --> C[下载原声 MP3]
+    C --> D[FFmpeg 转为 16kHz WAV]
+    D --> E[SenseVoice 20s 切片识别]
+    E --> F[原始转写文本 / JSON]
+    F --> G[Agent 语义校正与短句分段]
 ```
 
 ---
 
-## ✨ 核心亮点
+## 功能特点
 
-- ⚡ **零外部依赖 & 零成本**：全链路本地运行，无需任何第三方付费平台账号，隐私安全 100%。
-- 🎯 **20 秒切片算法内置**：专为口播短视频优化的连续滑动窗口机制，彻底杜绝长音频吞字断句问题。
-- 📱 **社交媒体呼吸感排版**：严格规范智能体交付，输出每 1～2 句话自然空行的小红书/短视频爆款文案排版。
-- 🔍 **黑话与网络热梗智能纠偏**：结合大语言模型的上下文常识，自动校正 ASR 对生僻热词（如 `vibe coding`、`薄肌理论`、`HC` 等）的同音偏差。
-- 🔌 **全 Agent 通用**：完全遵循标准开放 Skill 规范，可在 Antigravity、Claude Code、Codex 等各主流智能体间自由迁移。
+- **完全本地运行**：语音识别由本地的 SenseVoice ONNX 模型完成，不依赖外部付费转写 API，无 Token 费用。
+- **长音频 20 秒切片**：针对长视频按 20 秒滑动窗口分块推理，避免长音频单次解码导致的丢句漏字。
+- **无 GUI 窗口**：全流程由 Python 脚本在后台无头运行，适合直接嵌入各类命令行 Agent 的自动化链路。
+- **短句分段排版**：输出格式遵循移动端阅读习惯，每 1～2 句话独立成段，段落间空行，不增加概括性大纲与列表编号。
+- **术语纠错指引**：在 Agent 规范中内置了针对网络热词与英文术语（如 `vibe coding`、`薄肌理论` 等）的语义校正要求。
 
 ---
 
-## 🚀 快速上手 (Quick Start)
+## 环境准备
 
-### 1. 环境准备
+### 1. 安装基础依赖
 
-确保本机已安装 Python 3.10+ 和 FFmpeg：
+需要 Python 3.10 及以上版本，以及系统 PATH 中可用的 `ffmpeg`。
 
 ```bash
-# 安装 Python 依赖
+# 安装 Python 库
 pip install sherpa-onnx playwright
+
+# 安装 Playwright 浏览器内核
 playwright install msedge   # 或 playwright install chromium
 ```
 
-### 2. SenseVoice 模型准备
+### 2. 配置 SenseVoice 模型
 
-本工具支持自动发现本地模型文件（`model.onnx` 与 `tokens.txt`）。默认会按以下顺序扫描：
-1. 环境变量 `SENSE_VOICE_MODEL_DIR`
-2. `AppData/DouyinCreatorToolkit/models/asr/sense-voice`
+脚本会自动在以下路径寻找模型文件（`model.onnx` 与 `tokens.txt`）：
+
+1. 环境变量 `SENSE_VOICE_MODEL_DIR` 所指目录
+2. `AppData/DouyinCreatorToolkit/models/asr/sense-voice`（若安装过相关工具箱）
 3. `~/.cache/sherpa-onnx/sense-voice`
-4. 本项目根目录下 `models/sense-voice`
+4. 本项目根目录下的 `models/sense-voice`
 
-> 💡 **模型下载**：如本地尚未持有权重，可从 [sherpa-onnx 官方发布页](https://github.com/k2-fsa/sherpa-onnx/releases) 下载 SenseVoice-Small ONNX 格式模型解压至上述任意目录。
+如本地未下载模型，可从 [sherpa-onnx 官方发布页](https://github.com/k2-fsa/sherpa-onnx/releases) 下载 SenseVoice-Small ONNX 格式模型解压至上述任意目录。
 
-### 3. 命令行运行
+---
+
+## 使用方法
+
+### 命令行运行
 
 ```bash
-# 方式 A：直接传入抖音分享链接或口令
-python scripts/douyin_transcribe.py "5.87 复制打开抖音，看看【xxx的作品】... https://v.douyin.com/xxxx/ "
+# 1. 直接传入短链接或分享文本
+python scripts/douyin_transcribe.py "https://v.douyin.com/xxxx/"
 
-# 方式 B：管道输入
+# 2. 从标准输入读取（适合管道传递）
 echo "https://v.douyin.com/xxxx/" | python scripts/douyin_transcribe.py --stdin
 
-# 方式 C：输出结构化 JSON（供 Agent 二次解析）
+# 3. 输出结构化 JSON（包含分段详情与作者、标题元数据）
 python scripts/douyin_transcribe.py "https://v.douyin.com/xxxx/" --json
 ```
 
 ---
 
-## 🤖 跨 Agent 智能体配置与使用
+## 接入 Agent
 
-将本项目复制或软链至各 Agent 的 Skills 目录下即可全局生效：
+本项目可作为技能供支持 Skill 架构的 Agent 调用：
 
 ### 1. Google Antigravity
-放入 `~/.gemini/config/skills/ayubal-douyin-transcribe`。
-直接在对话中发送链接并附带指令：
-> “转写这条视频，排版好一点”
+将本项目放置或链接在 `~/.gemini/config/skills/ayubal-douyin-transcribe`。
+对话中输入视频链接或直接要求“转写这个抖音视频”，Agent 会按 `SKILL.md` 规则执行转写并完成自然分段。
 
 ### 2. Claude Code
-直接引入本技能，Claude 将会在检测到抖音短链时自动通过 Bash 运行 `scripts/douyin_transcribe.py --json`，并自动执行语义修复后交付。
+将项目引入后，Claude 会在处理抖音链接时调用 `scripts/douyin_transcribe.py --json` 提取文本，并按预设格式交付。
 
 ### 3. OpenAI Codex / Cursor
-作为终端工具集成到项目的 `.agent/skills/` 目录中即可随时唤起。
+作为终端工具放入工作区或全局 Skill 目录即可随时通过 CLI 唤起。
 
 ---
 
-## 📜 交付排版样式示例
+## 输出排版样式
 
-经过 Agent 语义调优后的标准输出风格：
+文字稿交付采用短句呼吸感排版，示例：
 
-```markdown
+```text
 什么薄肌理论、大学理论都不如我的摆摊理论。
 
 但凡你还在上大学，毕业想找份双休不加班还能月薪过万的好工作，就一定要遵循我的摆摊理论。
@@ -134,6 +110,6 @@ python scripts/douyin_transcribe.py "https://v.douyin.com/xxxx/" --json
 
 ---
 
-## 📄 开源许可证
+## 许可证
 
-本项目基于 [MIT License](./LICENSE) 开源。欢迎 Star 🌟 与提交 PR！
+本项目采用 [MIT License](./LICENSE) 授权。
